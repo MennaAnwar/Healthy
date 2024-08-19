@@ -13,6 +13,7 @@ const font = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Healthy",
   description: "A healthcare management system",
+  icons: { icon: "/assets/icons/logo.png" },
 };
 
 export default function RootLayout({
