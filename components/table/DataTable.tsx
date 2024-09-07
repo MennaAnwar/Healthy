@@ -8,7 +8,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,14 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+    const router = useRouter();
+  const pathname = usePathname();
+  const role = pathname.split("/")[1];
+  const key =
+    role === "admin"
+      ? process.env.NEXT_PUBLIC_ADMIN_PASSKEY
+      : process.env.NEXT_PUBLIC_DOCTOR_PASSKEY;
+
   const encryptedKey =
     typeof window !== "undefined"
       ? window.localStorage.getItem("accessKey")
@@ -39,8 +47,8 @@ export function DataTable<TData, TValue>({
   useEffect(() => {
     const accessKey = encryptedKey && decryptKey(encryptedKey);
 
-    if (accessKey !== process.env.NEXT_PUBLIC_ADMIN_PASSKEY!.toString()) {
-      redirect("/");
+    if (accessKey === key!.toString()) {
+      role === "admin" ? router.push("/admin") : router.push("/doctor");
     }
   }, [encryptedKey]);
 

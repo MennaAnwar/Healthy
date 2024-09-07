@@ -20,12 +20,21 @@ import {
 } from "@/components/ui/input-otp";
 import { decryptKey, encryptKey } from "@/lib/utils";
 
-const PasskeyModal = () => {
+type Role = {
+  role: number;
+};
+
+const PasskeyModal = ({ role }: Role) => {
   const router = useRouter();
   const path = usePathname();
   const [open, setOpen] = useState(false);
   const [passkey, setPasskey] = useState("");
   const [error, setError] = useState("");
+  const userRole = role === 1 ? "Admin" : "Doctor";
+  const key =
+    role === 1
+      ? process.env.NEXT_PUBLIC_ADMIN_PASSKEY
+      : process.env.NEXT_PUBLIC_DOCTOR_PASSKEY;
 
   const encryptedKey =
     typeof window !== "undefined"
@@ -36,9 +45,9 @@ const PasskeyModal = () => {
     const accessKey = encryptedKey && decryptKey(encryptedKey);
 
     if (path)
-      if (accessKey === process.env.NEXT_PUBLIC_ADMIN_PASSKEY!.toString()) {
+      if (accessKey === key!.toString()) {
         setOpen(false);
-        router.push("/admin");
+        role === 1 ? router.push("/admin") : router.push("/doctor");
       } else {
         setOpen(true);
       }
@@ -54,7 +63,7 @@ const PasskeyModal = () => {
   ) => {
     e.preventDefault();
 
-    if (passkey === process.env.NEXT_PUBLIC_ADMIN_PASSKEY) {
+    if (passkey === key) {
       const encryptedKey = encryptKey(passkey);
 
       localStorage.setItem("accessKey", encryptedKey);
@@ -70,7 +79,7 @@ const PasskeyModal = () => {
       <AlertDialogContent className="shad-alert-dialog">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-start justify-between">
-            Admin Access Verification
+            {userRole} Access Verification
             <Image
               src="/assets/icons/close.svg"
               alt="close"
@@ -118,6 +127,5 @@ const PasskeyModal = () => {
     </AlertDialog>
   );
 };
-
 
 export default PasskeyModal;

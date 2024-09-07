@@ -1,15 +1,17 @@
 import PatientForm from "@/components/forms/PatientForm";
 import Image from "next/image";
 import Link from "next/link";
-import PasskeyModal  from '@/components/PasskeyModal';
-
+import PasskeyModal from "@/components/PasskeyModal";
 
 export default function Home({ searchParams }: SearchParamProps) {
-    const isAdmin = searchParams?.admin === "true";
+  const isAdmin = searchParams?.admin === "true";
+  const isDoctor = searchParams?.doctor === "true";
 
   return (
     <div className="flex h-screen max-h-screen">
-      {isAdmin && <PasskeyModal/>}
+      {isAdmin && <PasskeyModal role={1} />}
+      {isDoctor && <PasskeyModal role={2} />}
+
       <section className="remove-scrollbar container my-auto">
         <div className="sub-container max-w-[496px] ">
           <div className="logo mb-12 flex items-center">
@@ -28,9 +30,14 @@ export default function Home({ searchParams }: SearchParamProps) {
           <p className="justify-items-end text-dark-600 xl:text-left">
             © 2024 Healthy
           </p>
-          <Link href="/?admin=true" className="text-blue-500">
-            Admin
-          </Link>
+          <div>
+            <Link href="/?admin=true" className="text-blue-500">
+              Admin
+            </Link>
+            <Link href="/?doctor=true" className="text-blue-500">
+              Doctor
+            </Link>
+          </div>
         </div>
       </section>
       <Image
